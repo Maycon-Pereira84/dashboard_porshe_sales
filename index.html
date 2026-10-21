@@ -88,30 +88,30 @@ button.reset{transition:.2s ease}
   </section>
 
   <section class="kpis">
-    <div class="card"><div class="kpi-label">Vendas</div><div class="kpi-value" id="kpiSales">—</div><div class="kpi-note" id="kpiSalesNote">unidades no recorte</div></div>
-    <div class="card"><div class="kpi-label">Receita</div><div class="kpi-value" id="kpiRevenue">—</div><div class="kpi-note">valor bruto das vendas</div></div>
-    <div class="card"><div class="kpi-label">Ticket médio</div><div class="kpi-value" id="kpiAvg">—</div><div class="kpi-note">preço médio por unidade</div></div>
-    <div class="card"><div class="kpi-label">Model year líder</div><div class="kpi-value" id="kpiYear">—</div><div class="kpi-note" id="kpiYearNote">maior volume no recorte</div></div>
+    <div class="card"><div class="kpi-label">Vendas concluídas</div><div class="kpi-value" id="kpiSales">—</div><div class="kpi-note" id="kpiSalesNote">status Delivered</div></div>
+    <div class="card"><div class="kpi-label">Receita</div><div class="kpi-value" id="kpiRevenue">—</div><div class="kpi-note">somente status Delivered · USD</div></div>
+    <div class="card"><div class="kpi-label">Ticket médio</div><div class="kpi-value" id="kpiAvg">—</div><div class="kpi-note">por venda entregue · USD</div></div>
+    <div class="card"><div class="kpi-label">Model year líder</div><div class="kpi-value" id="kpiYear">—</div><div class="kpi-note" id="kpiYearNote">maior volume entregue</div></div>
   </section>
 
   <section class="grid">
     <div class="panel">
-      <div class="panel-head"><div><h3>Modelos mais vendidos</h3><div class="panel-sub">Ranking por quantidade de unidades</div></div></div>
+      <div class="panel-head"><div><h3>Modelos mais vendidos</h3><div class="panel-sub">Ranking por quantidade de registros, todos os status</div></div></div>
       <div class="chartbox"><canvas id="modelsChart"></canvas></div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h3>Model year</h3><div class="panel-sub">Distribuição das vendas por ano</div></div></div>
+      <div class="panel-head"><div><h3>Model year</h3><div class="panel-sub">Distribuição por ano do modelo, todos os status</div></div></div>
       <div class="chartbox"><canvas id="yearsChart"></canvas></div>
     </div>
   </section>
 
   <section class="grid">
     <div class="panel">
-      <div class="panel-head"><div><h3>Principais modelos por cidade</h3><div class="panel-sub">Concentração do modelo líder em cada praça</div></div></div>
+      <div class="panel-head"><div><h3>Principais modelos por cidade</h3><div class="panel-sub">Modelo líder por cidade, todos os status</div></div></div>
       <div class="chartbox"><canvas id="cityChart"></canvas></div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h3>Pay method</h3><div class="panel-sub">Mix de pagamentos</div></div></div>
+      <div class="panel-head"><div><h3>Pay method</h3><div class="panel-sub">Mix de pagamentos, todos os status</div></div></div>
       <div class="chartbox"><canvas id="payChart"></canvas></div>
     </div>
   </section>
@@ -123,12 +123,12 @@ button.reset{transition:.2s ease}
   </section>
 
   <section class="panel" style="margin-top:18px">
-    <div class="panel-head"><div><h3>Detalhamento por cidade</h3><div class="panel-sub">Modelo mais vendido e volume dentro do recorte atual</div></div></div>
+    <div class="panel-head"><div><h3>Detalhamento por cidade</h3><div class="panel-sub">Modelo líder e participação por cidade, todos os status</div></div></div>
     <div class="tablewrap"><table><thead><tr><th>Cidade</th><th>Modelo líder</th><th>Unidades</th><th>Participação</th></tr></thead><tbody id="cityTable"></tbody></table></div>
   </section>
 
   <div class="footer">
-    Dados demonstrativos incluídos no código para fins de visualização. Antes de usar em análises reais, substitua o conjunto DATA pelos dados corretos. A interface usa uma estética minimalista de alto contraste, com acentos em vermelho.
+    Metodologia: os KPIs consideram somente registros com status Delivered; os gráficos, insights e tabela analisam todos os registros que correspondem aos filtros. Valores monetários interpretados em dólar americano (USD). As 24 datas inválidas foram mantidas como sem data; por isso, não devem ser usadas em análises temporais. A base incorporada contém 100 registros sanitizados e não inclui nomes de clientes ou vendedores.
   </div>
 </div>
 
@@ -161,7 +161,7 @@ function filtered(){
 function countBy(arr,key){
   const m={}; arr.forEach(d=>{m[d[key]]=(m[d[key]]||0)+1}); return m;
 }
-function money(n){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n)}
+function money(n){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:2}).format(n)}
 function pct(n){return (n*100).toFixed(1)+'%'}
 function topEntry(obj){
   const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
@@ -172,16 +172,20 @@ const baseOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{displ
 
 function render(){
   const d=filtered();
+  // Os KPIs de desempenho comercial consideram apenas vendas concluídas.
+  const delivered=d.filter(x=>x.status==='Delivered');
+  // Os gráficos complementares preservam todos os status para analisar o conjunto filtrado.
   const models=countBy(d,'model'), years=countBy(d,'year'), pays=countBy(d,'pay');
-  const total=d.length, revenue=d.reduce((s,x)=>s+(x.price||0),0), avg=total?revenue/total:0;
-  const [yr,yrN]=topEntry(years);
+  const deliveredYears=countBy(delivered,'year');
+  const total=delivered.length, revenue=delivered.reduce((s,x)=>s+(x.price||0),0), avg=total?revenue/total:0;
+  const [yr,yrN]=topEntry(deliveredYears);
 
   $('kpiSales').textContent=total;
-  $('kpiSalesNote').textContent=total===1?'unidade no recorte':'unidades no recorte';
+  $('kpiSalesNote').textContent=`${total} ${total===1?'venda entregue':'vendas entregues'} no recorte`;
   $('kpiRevenue').textContent=money(revenue);
   $('kpiAvg').textContent=money(avg);
   $('kpiYear').textContent=yr||'—';
-  $('kpiYearNote').textContent=yr?`${yrN} ${yrN===1?'venda':'vendas'}`:'sem dados';
+  $('kpiYearNote').textContent=yr?`${yrN} ${yrN===1?'venda entregue':'vendas entregues'}`:'sem vendas entregues';
 
   destroy('models');
   charts.models=new Chart($('modelsChart'),{
