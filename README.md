@@ -138,8 +138,8 @@ publicada como HTML estático.
 > A URL final depende do nome do usuário e do repositório no GitHub.
 > Depois de publicar, substitua os campos abaixo pelas URLs reais.
 
--   **Repositório:** `COLE_AQUI_A_URL_DO_REPOSITORIO`
--   **Dashboard publicada:** `COLE_AQUI_A_URL_DO_GITHUB_PAGES`
+-   **Repositório:** github.com/Maycon-Pereira84/dashboard_porshe_sales
+-   **Dashboard publicada:** maycon-pereira84.github.io/dashboard_porshe_sales
 
 ## Processo de desenvolvimento e uso de IA
 
