@@ -69,7 +69,7 @@ Essa distinção foi mantida intencionalmente: os KPIs principais medem vendas e
 - Nomes de clientes e vendedores não foram incluídos no conjunto de dados incorporado.
 - Os valores de preço são exibidos em dólar americano (USD), conforme a convenção definida para o projeto.
 
-## Tecnologias
+## Tecnologias utilizadas
 
 - HTML
 - CSS
@@ -109,8 +109,6 @@ A decisão analítica mais importante foi separar os KPIs de vendas concluídas 
 
 Também foi documentado o tratamento conservador das datas inválidas, sem preencher informações por suposição.
 
-**Ferramentas e processo devem ser descritos com transparência:** atualize esta seção caso também tenha utilizado ChatGPT Canvas, um agente personalizado com skill, Claude ou outra ferramenta durante a criação. Mencione somente as ferramentas e etapas que você realmente utilizou.
-
 ### Exemplo de prompt utilizado
 
 > Analise a base sanitizada de vendas Porsche e ajude a construir uma dashboard interativa em um único arquivo HTML. Inclua filtros por modelo, ano-modelo, cidade e forma de pagamento; KPIs de vendas concluídas, receita e ticket médio; gráficos que respondam a perguntas de negócio; e uma identidade visual escura com acentos em vermelho. Considere apenas registros com status `Delivered` nos KPIs principais, mantenha os demais registros disponíveis para as análises complementares, interprete os valores monetários em USD e preserve datas inválidas como sem data. Explique as decisões de tratamento e documente as limitações.
@@ -133,8 +131,16 @@ Base de dados sanitizada disponibilizada no desafio DIO **"Criando Agentes de Tr
 - Validar as datas inválidas com a fonte original, se houver informação confiável disponível.
 - Adicionar uma análise temporal depois da validação das datas.
 - Evoluir as análises por cidade e status, preservando a distinção entre registros e vendas concluídas.
-- Adicionar capturas de tela da dashboard e exemplos de filtros usados na apresentação do projeto.
 
+## Capturas de tela
+
+### Dashboard completa
+
+![Visão geral da dashboard Porsche Sales Intelligence](imagens/dashboard-completa.png)
+
+### Dashboard com filtro aplicado
+
+![Dashboard Porsche Sales Intelligence com filtro aplicado](imagens/dashboard-filtro-aplicado.png)
 ---
 
 Desenvolvido como projeto de aprendizado e análise de dados.
