@@ -76,14 +76,14 @@ button.reset{transition:.2s ease}
   <section class="hero">
     <div class="kicker">Porsche Sales Analytics</div>
     <h2>Uma leitura <strong>precisa</strong> do seu mercado.</h2>
-    <p>Explore modelos, cidades, anos de fabricação e métodos de pagamento. Os insights se recalculam em tempo real conforme os filtros.</p>
+    <p>Explore modelos, cidades, anos-modelo e métodos de pagamento. Os insights se recalculam em tempo real conforme os filtros.</p>
   </section>
 
   <section class="filters">
     <div><label for="model">Modelo Porsche</label><select id="model"></select></div>
-    <div><label for="year">Model year</label><select id="year"></select></div>
-    <div><label for="city">City</label><select id="city"></select></div>
-    <div><label for="pay">Pay method</label><select id="pay"></select></div>
+    <div><label for="year">Ano-modelo</label><select id="year"></select></div>
+    <div><label for="city">Cidade</label><select id="city"></select></div>
+    <div><label for="pay">Forma de pagamento</label><select id="pay"></select></div>
     <div style="grid-column:1/-1;display:flex;justify-content:flex-end"><button class="reset" id="reset">Limpar filtros</button></div>
   </section>
 
@@ -91,16 +91,16 @@ button.reset{transition:.2s ease}
     <div class="card"><div class="kpi-label">Vendas concluídas</div><div class="kpi-value" id="kpiSales">—</div><div class="kpi-note" id="kpiSalesNote">status Delivered</div></div>
     <div class="card"><div class="kpi-label">Receita</div><div class="kpi-value" id="kpiRevenue">—</div><div class="kpi-note">somente status Delivered · USD</div></div>
     <div class="card"><div class="kpi-label">Ticket médio</div><div class="kpi-value" id="kpiAvg">—</div><div class="kpi-note">por venda entregue · USD</div></div>
-    <div class="card"><div class="kpi-label">Model year líder</div><div class="kpi-value" id="kpiYear">—</div><div class="kpi-note" id="kpiYearNote">maior volume entregue</div></div>
+    <div class="card"><div class="kpi-label">Ano-modelo líder</div><div class="kpi-value" id="kpiYear">—</div><div class="kpi-note" id="kpiYearNote">maior volume entregue</div></div>
   </section>
 
   <section class="grid">
     <div class="panel">
-      <div class="panel-head"><div><h3>Modelos mais vendidos</h3><div class="panel-sub">Ranking por quantidade de registros, todos os status</div></div></div>
+      <div class="panel-head"><div><h3>Modelos mais frequentes</h3><div class="panel-sub">Ranking por quantidade de registros, todos os status</div></div></div>
       <div class="chartbox"><canvas id="modelsChart"></canvas></div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h3>Model year</h3><div class="panel-sub">Distribuição por ano do modelo, todos os status</div></div></div>
+      <div class="panel-head"><div><h3>Ano-modelo</h3><div class="panel-sub">Distribuição por ano do modelo, todos os status</div></div></div>
       <div class="chartbox"><canvas id="yearsChart"></canvas></div>
     </div>
   </section>
@@ -111,7 +111,7 @@ button.reset{transition:.2s ease}
       <div class="chartbox"><canvas id="cityChart"></canvas></div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h3>Pay method</h3><div class="panel-sub">Mix de pagamentos, todos os status</div></div></div>
+      <div class="panel-head"><div><h3>Formas de pagamento</h3><div class="panel-sub">Mix de pagamentos, todos os status</div></div></div>
       <div class="chartbox"><canvas id="payChart"></canvas></div>
     </div>
   </section>
@@ -219,11 +219,11 @@ function render(){
   const cityTotal=countBy(d,'city'), cityTop=topEntry(cityTotal);
   const modelTop=topEntry(models), payTop=topEntry(pays);
   $('ins1Title').textContent=cityTop[0]?`${cityTop[0]} lidera em volume`:'Sem recorte';
-  $('ins1').textContent=cityTop[0]?`${cityTop[0]} concentra ${cityTop[1]} venda(s) neste recorte. A leitura por modelo abaixo mostra qual Porsche domina a praça.`:'Aplique menos filtros para gerar uma leitura de mercado.';
+  $('ins1').textContent=cityTop[0]?`${cityTop[0]} concentra ${cityTop[1]} registro(s) neste recorte. A análise por modelo ajuda a identificar quais veículos aparecem com maior frequência na cidade.`:'Aplique menos filtros para gerar uma leitura de mercado.';
   $('ins2Title').textContent=modelTop[0]?`${modelTop[0]} é o destaque`:'Sem recorte';
-  $('ins2').textContent=modelTop[0]?`É o modelo com maior frequência, com ${modelTop[1]} unidade(s). Use o filtro de cidade para descobrir onde essa demanda se concentra.`:'Sem dados suficientes.';
+ $('ins2').textContent=modelTop[0]?`É o modelo com maior frequência, com ${modelTop[1]} registro(s). Use o filtro de cidade para analisar sua distribuição geográfica.`:'Sem dados suficientes.';
   $('ins3Title').textContent=payTop[0]?`${payTop[0]} é o principal método`:'Sem recorte';
-  $('ins3').textContent=payTop[0]?`Representa ${pct(payTop[1]/Math.max(total,1))} das vendas filtradas. Isso ajuda a entender o perfil de compra por praça.`:'Sem dados suficientes.';
+  $('ins3').textContent=payTop[0]?`Representa ${pct(payTop[1]/d.length)} dos registros filtrados, considerando todos os status. Isso ajuda a entender a distribuição das formas de pagamento por cidade.`:'Sem dados suficientes.';
 
   const tbody=$('cityTable'); tbody.innerHTML='';
   leaders.forEach(x=>{
